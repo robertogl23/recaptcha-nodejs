@@ -3,6 +3,8 @@ const express = require('express');
 const app = express();
 const request = require('request');
 const secretKey = "6Lf_0_kUAAAAAIqqDTejQQxCA9L6cIKlxbvVgr3O"
+
+let n = ''
 app.use(express.static(__dirname + '/public'))
 
 app.set('view engine','hbs');
@@ -11,13 +13,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.get('/' ,(req, res) =>{
   res.render('index',{
-    title: 'Pagina 1'
+    title: 'Pagina 1',
+  })
+
+});
+app.get('/home' ,(req, res) =>{
+  res.render('home',{
+    title: n,
   })
 
 });
 
 app.post('/captchaV3' ,(req,res) => {
-  const token = req.body.token;
+  const {token,name }= req.body;
+
   const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`
   if(!token){
     return res.json({
@@ -32,15 +41,16 @@ app.post('/captchaV3' ,(req,res) => {
     }
     const results = JSON.parse(body)
     const {success,score} = results
-    console.log(success,score)
+    console.log(success,score,name)
     if(success != true || score === 0.7){
       return res.json({
         msj: 'error'
       })
     }
-    return res.json({
+    res.json({
       msj: 'correcto'
     })
+    return   n = name
   })
 })
 app.listen(3000, function () {

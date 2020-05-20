@@ -4,34 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
-    <script src="https://www.google.com/recaptcha/api.js?render=6Lf_0_kUAAAAALF-1DTJBqDZy6p65zRWpsEe9T5k"></script>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lf_0_kUAAAAALF-1DTJBqDZy6p65zRWpsEe9T5k"></script> 
+    <link rel="stylesheet" href="../style.css"> 
 </head>
 <body>
-    <form id="form">
-        <h1>hola</h1>
-        <label for="">Nombre</label>
-        <input type="text">
-        <label for="">Nombre</label>
-        <input type="text">
-        <button type="submit">Entrar</button>
-    </form>
+<div class="container">
+    <div class="card">
+        <h3>Inicio de Sesion</h3>
+        <p>Ingre sus datos correctamente</p>
+        <div class="card-content">
+            <form class="col s12" id="form">
+        <div class="row">
+        <div class="input-field col s12">
+          <input id="text" type="text" class="validate">
+          <label for="text">Nombre</label>
+        </div>
+      </div>
+      <div class="row ">
+        <div class="input-field col s12 p">
+          <input id="email" type="password" class="validate">
+          <label for="email">Contaseña</label>
+        </div>
+      </div>
+
+  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+  </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
     document.querySelector('#form').addEventListener('submit',(e) => {
         e.preventDefault()
+        const name = document.querySelector('#text').value
         grecaptcha.execute('6Lf_0_kUAAAAALF-1DTJBqDZy6p65zRWpsEe9T5k', {action: 'homepage'}).then(function(token) {
-            sendData(token).then(data => {
-                console.log(data)
+            sendData(token,name).then(data => {
+                if(data.msj === "correcto"){
+                    return window.location.href = '/home'
+                }
+                return alert('Eres un robot')
             })
         });
     })
-    const sendData = async (token) =>{
+    const sendData = async (token,name) =>{
         const headers = {
             method: 'POST',
             headers:{
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({token})
+            body: JSON.stringify({token,name})
         }
         const response = await fetch('/captchaV3',headers)
         const data = await response.json();
